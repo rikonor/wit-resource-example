@@ -17,18 +17,19 @@ jobs:
 
           docker buildx build \
             -f Dockerfile.linux-kernel \
-            -t ghcr.io/dfinity/linux-kernel-builder:${{ github.sha }} \
+            -t orricon/test:${{ github.sha }} \
             --platform linux/amd64 \
             --build-arg SOURCE_DATE_EPOCH=0 \
             --output type=docker,dest=archive.tar,rewrite-timestamp=true \
                 .
+
+          docker load -i archive.tar
+
+      - name: Login to container registry
+        run: |
+          docker login \
+            -u 'orricon' \
+            -p 'dckr_pat_Xoa1eSF5okEbaNQ4hJ7YcVdPWWw'
       
-    #   - name: Login to container registry
-    #     run: |
-    #       docker login \
-    #         -u ${{ secrets.CONTAINER_REGISTRY_USERNAME }} \
-    #         -p ${{ secrets.CONTAINER_REGISTRY_PASSWORD }} \
-    #         ghcr.io
-      
-    #   - name: Publish docker image
-    #     run: docker push ghcr.io/dfinity/linux-kernel-builder:${{ github.sha }}
+      - name: Publish docker image
+        run: docker push orricon/test:${{ github.sha }}

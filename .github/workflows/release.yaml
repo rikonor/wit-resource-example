@@ -92,10 +92,11 @@ jobs:
 
           ## Verification
 
-          To verify the artifacts of this release:
+          To reproduce the artifacts of this release:
 
           ${CODE_BLOCK}
-          echo hi
+          cat data.txt | base64    > output.base64.txt
+          cat data.txt | xxd -p -u > output.hex.txt
           ${CODE_BLOCK}
 
           ## Checksums

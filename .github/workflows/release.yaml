@@ -40,12 +40,14 @@ jobs:
 
       - name: build
         run: |
-          cat data.txt | base64    > output.base64.txt
-          cat data.txt | xxd -p -u > output.hex.txt
+          OUTPUT=$(mkdir -d)
+
+          cat data.txt | base64    > ${OUTPUT}/output.base64.txt
+          cat data.txt | xxd -p -u > ${OUTPUT}/output.hex.txt
 
           ARTIFACTS=(
-            output.base64.txt
-            output.hex.txt
+            ${OUTPUT}/output.base64.txt
+            ${OUTPUT}/output.hex.txt
           )
 
           echo "ARTIFACTS=${ARTIFACTS[@]}" >> "${GITHUB_ENV}"

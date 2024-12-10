@@ -13,13 +13,14 @@ on:
         required: true
         type: string
 
-      commit:
-        description: 'Commit to base the release on'
-        required: true
+      ref:
+        description: 'Commit to base the release on (defaults to `HEAD`)'
+        required: false
+        default: 'HEAD'
         type: string
 
       tag:
-        description: 'Tag for the release'
+        description: 'Tag for the release (defaults to `anonymization-backend-<COMMIT>`)'
         required: false
         type: string
 
@@ -27,7 +28,7 @@ permissions:
   contents: write
 
 env:
-  NAME: log-anonymization-backend
+  NAME: anonymization-backend
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -52,7 +53,7 @@ jobs:
 
       - name: tag
         run: |
-          COMMIT=$(git rev-parse ${{ inputs.commit }})
+          COMMIT=$(git rev-parse ${{ inputs.ref }})
           git checkout ${COMMIT}
 
           RELEASE_TAG='${{ inputs.tag }}'

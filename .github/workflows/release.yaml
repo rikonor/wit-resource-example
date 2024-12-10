@@ -1,8 +1,5 @@
 name: release
 
-permissions:
-  contents: write
-
 on:
   workflow_dispatch:
     inputs:
@@ -16,12 +13,21 @@ on:
         required: true
         type: string
 
+      commit:
+        description: 'Commit to base the release on'
+        required: true
+        type: string
+
       tag:
         description: 'Tag for the release'
         required: false
         type: string
 
+permissions:
+  contents: write
+
 env:
+  NAME: log-anonymization-backend
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -29,10 +35,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - run: gh release list
+
       - run: |
-          echo START
+          echo TITLE START
           echo ${{ inputs.title }}
+          echo TITLE END
+
+      - run: |
+          echo DESCRIPTION START
           echo ${{ inputs.description }}
-          echo ${{ inputs.tag }}
-          echo END
+          echo DESCRIPTION END
+
+      - run: |
+          echo COMMIT START
+          echo ${{ inputs.commit }}
+          echo COMMIT END
+
+      - run: |
+          echo TAG START
+
+          COMMIT=$(git rev-parse HEAD)
+          git checkout ${COMMIT}
+
+          RELEASE_NAME='${{ inputs.tag }}'
+          if [[ -z "${RELEASE_NAME}" ]]; then
+            COMMIT_SHORT=$(git rev-parse --short ${COMMIT})
+            RELEASE_NAME="${{ env.NAME }}-${COMMIT_SHORT}"
+          fi
+          
+          git tag ${RELEASE_NAME}
+          git push origin tag ${RELEASE_NAME}
+          
+          echo TAG END

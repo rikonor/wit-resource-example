@@ -43,12 +43,22 @@ jobs:
           cat data.txt | base64    > output.base64.txt
           cat data.txt | xxd -p -u > output.hex.txt
 
-      - name: checksums
-        run: |
           ARTIFACTS=(
             output.base64.txt
             output.hex.txt
           )
+
+          echo "ARTIFACTS=${ARTIFACTS[@]}" >> "${GITHUB_ENV}"
+
+      - name: checksums
+        run: |
+          CHECKSUMS=$(mktemp)
+
+          for ARTIFACT in ${ARTIFACTS[@]}; do
+              shasum -a256 ${ARTIFACT} >> ${CHECKSUMS}
+          done
+
+          echo "CHECKSUMS=${CHECKSUMS}" >> "${GITHUB_ENV}"
 
       - name: tag
         run: |
@@ -78,14 +88,20 @@ jobs:
           CODE_BLOCK='```'
 
           cat > ${NOTES} <<EOF
-          ## Description
-
           ${{ inputs.description }}
+
+          ## Verification
+
+          To verify the artifacts of this release:
+
+          ${CODE_BLOCK}
+          echo hi
+          ${CODE_BLOCK}
 
           ## Checksums
 
           ${CODE_BLOCK}
-          test
+          $(cat ${CHECKSUMS})
           ${CODE_BLOCK}
           EOF
 
@@ -93,9 +109,8 @@ jobs:
 
       - name: release
         run: |
-          cat ${NOTES}
           gh release create \
-            ${RELEASE_TAG} \
+            ${RELEASE_TAG} ${ARTIFACTS[@]} \
                 --title ${{ inputs.title }} \
                 --verify-tag \
                 --draft --latest=false \

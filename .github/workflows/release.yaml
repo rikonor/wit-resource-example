@@ -75,7 +75,7 @@ jobs:
           fi
 
           if [[ ! "${RELEASE_TAG}" =~ "^${{ env.NAME }}" ]]; then
-            echo "Required tag prefix: ${{ env.NAME }}"
+            echo "ERROR: Required tag prefix: ${{ env.NAME }}"
             exit 1
           fi
 

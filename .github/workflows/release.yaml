@@ -112,7 +112,7 @@ jobs:
         run: |
           gh release create \
             ${RELEASE_TAG} ${ARTIFACTS[@]} \
-                --title ${{ inputs.title }} \
+                --title '${{ inputs.title }}' \
                 --verify-tag \
-                --draft --latest=false \
+                --latest=false \
                 --notes-file ${NOTES}

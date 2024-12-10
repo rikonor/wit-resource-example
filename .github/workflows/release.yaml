@@ -38,34 +38,59 @@ jobs:
 
       - run: gh release list
 
-      - run: |
-          echo TITLE START
-          echo ${{ inputs.title }}
-          echo TITLE END
+      - name: build
+        run: |
+          cat data.txt | base64    > output.base64.txt
+          cat data.txt | xxd -p -u > output.hex.txt
 
-      - run: |
-          echo DESCRIPTION START
-          echo ${{ inputs.description }}
-          echo DESCRIPTION END
+      - name: checksums
+        run: |
+          ARTIFACTS=(
+            output.base64.txt
+            output.hex.txt
+          )
 
-      - run: |
-          echo COMMIT START
-          echo ${{ inputs.commit }}
-          echo COMMIT END
-
-      - run: |
-          echo TAG START
-
-          COMMIT=$(git rev-parse HEAD)
+      - name: tag
+        run: |
+          COMMIT=$(git rev-parse ${{ inputs.commit }})
           git checkout ${COMMIT}
 
-          RELEASE_NAME='${{ inputs.tag }}'
-          if [[ -z "${RELEASE_NAME}" ]]; then
+          RELEASE_TAG='${{ inputs.tag }}'
+          if [[ -z "${RELEASE_TAG}" ]]; then
             COMMIT_SHORT=$(git rev-parse --short ${COMMIT})
-            RELEASE_NAME="${{ env.NAME }}-${COMMIT_SHORT}"
+            RELEASE_TAG="${{ env.NAME }}-${COMMIT_SHORT}"
           fi
           
-          git tag ${RELEASE_NAME}
-          git push origin tag ${RELEASE_NAME}
-          
-          echo TAG END
+          git tag ${RELEASE_TAG}
+          git push origin tag ${RELEASE_TAG}
+
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> "${GITHUB_ENV}"
+
+      - name: release notes
+        run: |
+          NOTES=$(mktemp)
+
+          CODE_BLOCK='```'
+
+          cat > ${NOTES} <<EOF
+          ## Description
+
+          ${{ inputs.description }}
+
+          ## Checksums
+
+          ${CODE_BLOCK}
+          test
+          ${CODE_BLOCK}
+          EOF
+
+          echo "NOTES=${NOTES}" >> "${GITHUB_ENV}"
+
+      - name: release
+        run: |
+          gh release create \
+            ${RELEASE_TAG} \
+                --title ${{ inputs.title }} \
+                --verify-tag \
+                --draft --latest=false \
+                --notes-file ${NOTES}

@@ -93,6 +93,7 @@ jobs:
 
       - name: release
         run: |
+          cat ${NOTES}
           gh release create \
             ${RELEASE_TAG} \
                 --title ${{ inputs.title }} \

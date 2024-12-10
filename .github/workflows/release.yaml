@@ -40,7 +40,7 @@ jobs:
 
       - name: build
         run: |
-          OUTPUT=$(mkdir -d)
+          OUTPUT=$(mktemp -d)
 
           cat data.txt | base64    > ${OUTPUT}/output.base64.txt
           cat data.txt | xxd -p -u > ${OUTPUT}/output.hex.txt

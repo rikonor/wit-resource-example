@@ -36,18 +36,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: gh release list
-
       - name: build
         run: |
-          OUTPUT=$(mktemp -d)
-
-          cat data.txt | base64    > ${OUTPUT}/output.base64.txt
-          cat data.txt | xxd -p -u > ${OUTPUT}/output.hex.txt
+          cat data.txt | base64    > output.base64.txt
+          cat data.txt | xxd -p -u > output.hex.txt
 
           ARTIFACTS=(
-            ${OUTPUT}/output.base64.txt
-            ${OUTPUT}/output.hex.txt
+            output.base64.txt
+            output.hex.txt
           )
 
           echo "ARTIFACTS=${ARTIFACTS[@]}" >> "${GITHUB_ENV}"

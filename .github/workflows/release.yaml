@@ -16,7 +16,6 @@ on:
       ref:
         description: 'Commit to base the release on (defaults to `HEAD`)'
         required: false
-        default: 'HEAD'
         type: string
 
       tag:
@@ -53,7 +52,12 @@ jobs:
 
       - name: tag
         run: |
-          COMMIT=$(git rev-parse ${{ inputs.ref }})
+          REF='${{ inputs.ref }}'
+          if [[ -z "${REF}" ]]; then
+            REF='HEAD'
+          fi
+
+          COMMIT=$(git rev-parse ${REF})
           git checkout ${COMMIT}
 
           RELEASE_TAG='${{ inputs.tag }}'

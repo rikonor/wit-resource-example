@@ -74,7 +74,7 @@ jobs:
             RELEASE_TAG="${{ env.NAME }}-${COMMIT_SHORT}"
           fi
 
-          if [[ "${RELEASE_TAG}" =~ "^${{ env.NAME }}" ]]; then
+          if [[ ! "${RELEASE_TAG}" =~ "^${{ env.NAME }}" ]]; then
             echo "Required tag prefix: ${{ env.NAME }}"
             exit 1
           fi

@@ -4,7 +4,22 @@ permissions:
   contents: write
 
 on:
-  push:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'Title for the release'
+        required: true
+        type: string
+
+      description:
+        description: 'Human-readable description of the release'
+        required: true
+        type: string
+
+      tag:
+        description: 'Tag for the release'
+        required: false
+        type: string
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -15,3 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: gh release list
+      - run: |
+          echo START
+          echo ${{ inputs.title }}
+          echo ${{ inputs.description }}
+          echo ${{ inputs.tag }}
+          echo END

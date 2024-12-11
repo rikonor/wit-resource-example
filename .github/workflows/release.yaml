@@ -35,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ input.ref }}
 
       - name: build
         run: |
@@ -60,14 +62,6 @@ jobs:
 
       - name: tag
         run: |
-          REF='${{ inputs.ref }}'
-          if [[ -z "${REF}" ]]; then
-            REF='HEAD'
-          fi
-
-          COMMIT=$(git rev-parse ${REF})
-          git checkout ${COMMIT}
-
           RELEASE_TAG='${{ inputs.tag }}'
           if [[ -z "${RELEASE_TAG}" ]]; then
             COMMIT_SHORT=$(git rev-parse --short ${COMMIT})

@@ -13,11 +13,6 @@ on:
         required: true
         type: string
 
-      ref:
-        description: 'Commit to base the release on (defaults to `HEAD`)'
-        required: false
-        type: string
-
       tag:
         description: 'Tag for the release (defaults to `anonymization-backend-<COMMIT>`)'
         required: false
@@ -35,8 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref }}
 
       - name: build
         run: |
@@ -74,18 +67,6 @@ jobs:
           fi
 
           git tag ${RELEASE_TAG}
-
-          echo "-->"
-          git status
-          echo "-->"
-
-          rm output.base64.txt
-          rm output.hex.txt
-
-          echo "-->"
-          git status
-          echo "-->"
-
           git push origin tag ${RELEASE_TAG}
 
           echo "RELEASE_TAG=${RELEASE_TAG}" >> "${GITHUB_ENV}"

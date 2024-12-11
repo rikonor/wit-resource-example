@@ -73,11 +73,12 @@ jobs:
             exit 1
           fi
 
+          git tag ${RELEASE_TAG}
+
           echo "-->"
-          echo $PWD
+          git status
           echo "-->"
 
-          git tag ${RELEASE_TAG}
           git push origin tag ${RELEASE_TAG}
 
           echo "RELEASE_TAG=${RELEASE_TAG}" >> "${GITHUB_ENV}"

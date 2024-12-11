@@ -64,7 +64,7 @@ jobs:
         run: |
           RELEASE_TAG='${{ inputs.tag }}'
           if [[ -z "${RELEASE_TAG}" ]]; then
-            COMMIT_SHORT=$(git rev-parse --short ${COMMIT})
+            COMMIT_SHORT=$(git rev-parse --short HEAD)
             RELEASE_TAG="${{ env.NAME }}-${COMMIT_SHORT}"
           fi
 

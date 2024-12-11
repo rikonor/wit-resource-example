@@ -73,6 +73,10 @@ jobs:
             exit 1
           fi
 
+          echo "-->"
+          echo $PWD
+          echo "-->"
+
           git tag ${RELEASE_TAG}
           git push origin tag ${RELEASE_TAG}
 

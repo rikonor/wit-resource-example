@@ -79,6 +79,13 @@ jobs:
           git status
           echo "-->"
 
+          rm output.base64.txt
+          rm output.hex.txt
+
+          echo "-->"
+          git status
+          echo "-->"
+
           git push origin tag ${RELEASE_TAG}
 
           echo "RELEASE_TAG=${RELEASE_TAG}" >> "${GITHUB_ENV}"

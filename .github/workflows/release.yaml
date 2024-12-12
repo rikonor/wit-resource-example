@@ -13,6 +13,11 @@ on:
         required: true
         type: string
 
+      ref:
+        description: 'Commit to base the release on (defaults to HEAD)'
+        required: false
+        type: string
+
       tag:
         description: 'Tag for the release (defaults to `anonymization-backend-<COMMIT>`)'
         required: false
@@ -30,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: build
         run: |

@@ -66,8 +66,8 @@ jobs:
             exit 1
           fi
 
-          git tag ${RELEASE_TAG}
-          git push origin tag ${RELEASE_TAG}
+          # git tag ${RELEASE_TAG}
+          # git push origin tag ${RELEASE_TAG}
 
           echo "RELEASE_TAG=${RELEASE_TAG}" >> "${GITHUB_ENV}"
 
@@ -104,6 +104,8 @@ jobs:
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ inputs.title }}
           make_latest: false
+          body_path: ${{ env.NOTES }}
+          # target_commitish: 
 
       # - name: release
       #   run: |

@@ -99,7 +99,7 @@ jobs:
           echo "NOTES=${NOTES}" >> "${GITHUB_ENV}"
 
       - name: release
-        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
+        uses: softprops/action-gh-release@7b4da11513bf3f43f9999e90eabced41ab8bb048
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ inputs.title }}

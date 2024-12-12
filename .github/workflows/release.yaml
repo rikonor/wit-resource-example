@@ -13,11 +13,6 @@ on:
         required: true
         type: string
 
-      ref:
-        description: 'Commit to base the release on (defaults to HEAD)'
-        required: false
-        type: string
-
       tag:
         description: 'Tag for the release (defaults to `anonymization-backend-<COMMIT>`)'
         required: false
@@ -43,18 +38,20 @@ jobs:
           cat data.txt | base64    > output.base64.txt
           cat data.txt | xxd -p -u > output.hex.txt
 
-          ARTIFACTS=(
-            output.base64.txt
-            output.hex.txt
-          )
+          ARTIFACTS=$(mktemp)
 
-          echo "ARTIFACTS=${ARTIFACTS[@]}" >> "${GITHUB_ENV}"
+          cat > ${ARTIFACTS} <<EOF
+          output.base64.txt
+          output.hex.txt
+          EOF
+
+          echo "ARTIFACTS=${ARTIFACTS}" >> "${GITHUB_ENV}"
 
       - name: checksums
         run: |
           CHECKSUMS=$(mktemp)
 
-          for ARTIFACT in ${ARTIFACTS[@]}; do
+          for ARTIFACT in $(cat ${ARTIFACTS}); do
               shasum -a256 ${ARTIFACT} >> ${CHECKSUMS}
           done
 
@@ -112,7 +109,7 @@ jobs:
           name: ${{ inputs.title }}
           make_latest: false
           body_path: ${{ env.NOTES }}
-          # target_commitish: 
+          files: ${{ env.ARTIFACTS }}
 
       # - name: release
       #   run: |

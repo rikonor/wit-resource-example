@@ -99,10 +99,17 @@ jobs:
           echo "NOTES=${NOTES}" >> "${GITHUB_ENV}"
 
       - name: release
-        run: |
-          gh release create \
-            ${RELEASE_TAG} ${ARTIFACTS[@]} \
-                --title '${{ inputs.title }}' \
-                --verify-tag \
-                --latest=false \
-                --notes-file ${NOTES}
+        uses: softprops/action-gh-release
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: ${{ inputs.title }}
+          make_latest: false
+
+      # - name: release
+      #   run: |
+      #     gh release create \
+      #       ${RELEASE_TAG} ${ARTIFACTS[@]} \
+      #           --title '${{ inputs.title }}' \
+      #           --verify-tag \
+      #           --latest=false \
+      #           --notes-file ${NOTES}

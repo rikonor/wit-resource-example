@@ -42,13 +42,15 @@ jobs:
             output.hex.txt
           )
 
-          echo "ARTIFACTS=${ARTIFACTS[@]}" >> "${GITHUB_ENV}"
+          echo "ARTIFACTS<<EOF"                                >> $GITHUB_ENV
+          for ARTIFACT in ${ARTIFACTS[@]}; do echo ${ARTIFACT} >> $GITHUB_ENV; done
+          echo "EOF"                                           >> $GITHUB_ENV
 
       - name: checksums
         run: |
           CHECKSUMS=$(mktemp)
 
-          for ARTIFACT in ${ARTIFACTS[@]}; do
+          for ARTIFACT in ${ARTIFACTS}; do
               shasum -a256 ${ARTIFACT} >> ${CHECKSUMS}
           done
 

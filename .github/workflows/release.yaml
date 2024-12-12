@@ -35,12 +35,11 @@ jobs:
 
       - name: artifacts
         run: |
-          ARTIFACTS=$(mktemp)
-
-          cat > ${ARTIFACTS} <<EOF
+          ARTIFACTS=$(cat <<EOF
           output.base64.txt
           output.hex.txt
           EOF
+          )
 
           echo "ARTIFACTS=${ARTIFACTS}" >> "${GITHUB_ENV}"
 
@@ -48,7 +47,7 @@ jobs:
         run: |
           CHECKSUMS=$(mktemp)
 
-          for ARTIFACT in $(cat ${ARTIFACTS}); do
+          for ARTIFACT in ${ARTIFACTS}; do
               shasum -a256 ${ARTIFACT} >> ${CHECKSUMS}
           done
 

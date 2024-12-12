@@ -13,11 +13,6 @@ on:
         required: true
         type: string
 
-      tag:
-        description: 'Tag for the release (defaults to `anonymization-backend-<COMMIT>`)'
-        required: false
-        type: string
-
 permissions:
   contents: write
 
@@ -38,6 +33,8 @@ jobs:
           cat data.txt | base64    > output.base64.txt
           cat data.txt | xxd -p -u > output.hex.txt
 
+      - name: artifacts
+        run: |
           ARTIFACTS=$(mktemp)
 
           cat > ${ARTIFACTS} <<EOF
@@ -59,19 +56,8 @@ jobs:
 
       - name: tag
         run: |
-          RELEASE_TAG='${{ inputs.tag }}'
-          if [[ -z "${RELEASE_TAG}" ]]; then
-            COMMIT_SHORT=$(git rev-parse --short HEAD)
-            RELEASE_TAG="${{ env.NAME }}-${COMMIT_SHORT}"
-          fi
-
-          if [[ ! "${RELEASE_TAG}" =~ ^${{ env.NAME }} ]]; then
-            echo "ERROR: Required tag prefix: ${{ env.NAME }}"
-            exit 1
-          fi
-
-          # git tag ${RELEASE_TAG}
-          # git push origin tag ${RELEASE_TAG}
+          COMMIT_SHORT=$(git rev-parse --short HEAD)
+          RELEASE_TAG="${{ env.NAME }}-${COMMIT_SHORT}"
 
           echo "RELEASE_TAG=${RELEASE_TAG}" >> "${GITHUB_ENV}"
 
@@ -110,12 +96,3 @@ jobs:
           make_latest: false
           body_path: ${{ env.NOTES }}
           files: ${{ env.ARTIFACTS }}
-
-      # - name: release
-      #   run: |
-      #     gh release create \
-      #       ${RELEASE_TAG} ${ARTIFACTS[@]} \
-      #           --title '${{ inputs.title }}' \
-      #           --verify-tag \
-      #           --latest=false \
-      #           --notes-file ${NOTES}

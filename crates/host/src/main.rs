@@ -41,20 +41,20 @@ async fn main() -> Result<(), Error> {
     let mut lnk = Linker::new(&ngn);
     wasmtime_wasi::add_to_linker_async(&mut lnk)?;
 
-    // Facade
-    let _fac = Component::from_file(&ngn, "target/wasm32-wasip2/debug/facade.wasm")?;
-
     // NOTE: I want to make sure the facade is linked so that the extension can call it
     // NOTE: but it seems you can only specify one world in the `bindgen!(...)` call above (line 8)
+    // NOTE: so below I am doing so manually via the linker (not using any bindings)
+
+    // Facade
+    let fac = Component::from_file(&ngn, "target/wasm32-wasip2/debug/facade.wasm")?;
+    lnk.instantiate_async(&mut store, &fac).await?;
 
     // Extension
     let ext = Component::from_file(&ngn, "target/wasm32-wasip2/debug/extension.wasm")?;
     let ext = Extension::instantiate_async(&mut store, &ext, &lnk).await?;
 
     // NOTE: I want to invoke `init` on the `extension` component
-    println!("1");
     ext.local_build_init().call_init(&mut store).await?;
-    println!("2");
 
     Ok(())
 }

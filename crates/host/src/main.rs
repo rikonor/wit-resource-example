@@ -9,6 +9,13 @@ bindgen!({
     path: "../extension/wit",
 });
 
+// bindgen!({
+//     path: "../facade/wit",
+// });
+
+/// The above will generate bindings for Extension
+/// but I am not sure how I could also generate bindings for the facade component?
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     // Config

@@ -6,5 +6,5 @@ version.workspace = true
 [dependencies]
 anyhow.workspace = true
 tokio = { workspace = true, features = ["full"] }
-wasmtime.workspace = true
+wasmtime = { workspace = true, features = ["component-model", "async"] }
 wasmtime-wasi.workspace = true

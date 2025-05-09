@@ -7,6 +7,7 @@ use wasmtime_wasi::{IoView, ResourceTable, WasiCtx, WasiCtxBuilder, WasiView};
 
 bindgen!({
     path: "../extension/wit",
+    async: true,
 });
 
 // bindgen!({
@@ -48,10 +49,12 @@ async fn main() -> Result<(), Error> {
 
     // Extension
     let ext = Component::from_file(&ngn, "target/wasm32-wasip2/debug/extension.wasm")?;
-    let ext = Extension::instantiate(&mut store, &ext, &lnk)?;
+    let ext = Extension::instantiate_async(&mut store, &ext, &lnk).await?;
 
     // NOTE: I want to invoke `init` on the `extension` component
-    ext.local_build_init().call_init(&mut store)?;
+    println!("1");
+    ext.local_build_init().call_init(&mut store).await?;
+    println!("2");
 
     Ok(())
 }

@@ -3,21 +3,22 @@ mod bindings;
 
 use bindings::{
     exports::local::build::{init, types},
-    local::build::registry::register_provider,
+    // local::build::registry::register_provider,
 };
 
 struct Component;
 
 impl init::Guest for Component {
     fn init() -> () {
-        let b = bindings::exports::local::build::types::Builder::new(Tmp);
-        let b = unsafe { bindings::local::build::types::Builder::from_handle(b.handle()) };
+        println!("[extension] init called");
+        // let b = bindings::exports::local::build::types::Builder::new(Tmp);
+        // let b = unsafe { bindings::local::build::types::Builder::from_handle(b.handle()) };
 
-        register_provider(
-            "my-canister-type", // canister_type
-            b,                  // canister_builder
-        )
-        .expect("failed to register canister builder");
+        // register_provider(
+        //     "my-canister-type", // canister_type
+        //     b,                  // canister_builder
+        // )
+        // .expect("failed to register canister builder");
     }
 }
 

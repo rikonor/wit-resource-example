@@ -3,212 +3,6 @@
 //   * runtime_path: "wit_bindgen_rt"
 #[rustfmt::skip]
 #[allow(dead_code, clippy::all)]
-pub mod local {
-    pub mod build {
-        #[allow(dead_code, async_fn_in_trait, unused_imports, clippy::all)]
-        pub mod types {
-            #[used]
-            #[doc(hidden)]
-            static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
-            use super::super::super::_rt;
-            #[derive(Debug)]
-            #[repr(transparent)]
-            pub struct Builder {
-                handle: _rt::Resource<Builder>,
-            }
-            impl Builder {
-                #[doc(hidden)]
-                pub unsafe fn from_handle(handle: u32) -> Self {
-                    Self {
-                        handle: unsafe { _rt::Resource::from_handle(handle) },
-                    }
-                }
-                #[doc(hidden)]
-                pub fn take_handle(&self) -> u32 {
-                    _rt::Resource::take_handle(&self.handle)
-                }
-                #[doc(hidden)]
-                pub fn handle(&self) -> u32 {
-                    _rt::Resource::handle(&self.handle)
-                }
-            }
-            unsafe impl _rt::WasmResource for Builder {
-                #[inline]
-                unsafe fn drop(_handle: u32) {
-                    #[cfg(not(target_arch = "wasm32"))]
-                    unreachable!();
-                    #[cfg(target_arch = "wasm32")]
-                    {
-                        #[link(wasm_import_module = "local:build/types")]
-                        unsafe extern "C" {
-                            #[link_name = "[resource-drop]builder"]
-                            fn drop(_: u32);
-                        }
-                        unsafe { drop(_handle) };
-                    }
-                }
-            }
-            impl Builder {
-                #[allow(unused_unsafe, clippy::all)]
-                pub fn build_canister(
-                    &self,
-                    canister_dir: &str,
-                ) -> Result<(), _rt::String> {
-                    unsafe {
-                        #[cfg_attr(target_pointer_width = "64", repr(align(8)))]
-                        #[cfg_attr(target_pointer_width = "32", repr(align(4)))]
-                        struct RetArea(
-                            [::core::mem::MaybeUninit<
-                                u8,
-                            >; 3 * ::core::mem::size_of::<*const u8>()],
-                        );
-                        let mut ret_area = RetArea(
-                            [::core::mem::MaybeUninit::uninit(); 3
-                                * ::core::mem::size_of::<*const u8>()],
-                        );
-                        let vec0 = canister_dir;
-                        let ptr0 = vec0.as_ptr().cast::<u8>();
-                        let len0 = vec0.len();
-                        let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
-                        #[cfg(target_arch = "wasm32")]
-                        #[link(wasm_import_module = "local:build/types")]
-                        unsafe extern "C" {
-                            #[link_name = "[method]builder.build-canister"]
-                            fn wit_import2(_: i32, _: *mut u8, _: usize, _: *mut u8);
-                        }
-                        #[cfg(not(target_arch = "wasm32"))]
-                        unsafe extern "C" fn wit_import2(
-                            _: i32,
-                            _: *mut u8,
-                            _: usize,
-                            _: *mut u8,
-                        ) {
-                            unreachable!()
-                        }
-                        unsafe {
-                            wit_import2(
-                                (self).handle() as i32,
-                                ptr0.cast_mut(),
-                                len0,
-                                ptr1,
-                            )
-                        };
-                        let l3 = i32::from(*ptr1.add(0).cast::<u8>());
-                        let result7 = match l3 {
-                            0 => {
-                                let e = ();
-                                Ok(e)
-                            }
-                            1 => {
-                                let e = {
-                                    let l4 = *ptr1
-                                        .add(::core::mem::size_of::<*const u8>())
-                                        .cast::<*mut u8>();
-                                    let l5 = *ptr1
-                                        .add(2 * ::core::mem::size_of::<*const u8>())
-                                        .cast::<usize>();
-                                    let len6 = l5;
-                                    let bytes6 = _rt::Vec::from_raw_parts(
-                                        l4.cast(),
-                                        len6,
-                                        len6,
-                                    );
-                                    _rt::string_lift(bytes6)
-                                };
-                                Err(e)
-                            }
-                            _ => _rt::invalid_enum_discriminant(),
-                        };
-                        result7
-                    }
-                }
-            }
-        }
-        #[allow(dead_code, async_fn_in_trait, unused_imports, clippy::all)]
-        pub mod registry {
-            #[used]
-            #[doc(hidden)]
-            static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
-            use super::super::super::_rt;
-            pub type Builder = super::super::super::local::build::types::Builder;
-            #[allow(unused_unsafe, clippy::all)]
-            pub fn register_provider(
-                canister_type: &str,
-                canister_builder: Builder,
-            ) -> Result<(), _rt::String> {
-                unsafe {
-                    #[cfg_attr(target_pointer_width = "64", repr(align(8)))]
-                    #[cfg_attr(target_pointer_width = "32", repr(align(4)))]
-                    struct RetArea(
-                        [::core::mem::MaybeUninit<
-                            u8,
-                        >; 3 * ::core::mem::size_of::<*const u8>()],
-                    );
-                    let mut ret_area = RetArea(
-                        [::core::mem::MaybeUninit::uninit(); 3
-                            * ::core::mem::size_of::<*const u8>()],
-                    );
-                    let vec0 = canister_type;
-                    let ptr0 = vec0.as_ptr().cast::<u8>();
-                    let len0 = vec0.len();
-                    let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
-                    #[cfg(target_arch = "wasm32")]
-                    #[link(wasm_import_module = "local:build/registry")]
-                    unsafe extern "C" {
-                        #[link_name = "register-provider"]
-                        fn wit_import2(_: *mut u8, _: usize, _: i32, _: *mut u8);
-                    }
-                    #[cfg(not(target_arch = "wasm32"))]
-                    unsafe extern "C" fn wit_import2(
-                        _: *mut u8,
-                        _: usize,
-                        _: i32,
-                        _: *mut u8,
-                    ) {
-                        unreachable!()
-                    }
-                    unsafe {
-                        wit_import2(
-                            ptr0.cast_mut(),
-                            len0,
-                            (&canister_builder).take_handle() as i32,
-                            ptr1,
-                        )
-                    };
-                    let l3 = i32::from(*ptr1.add(0).cast::<u8>());
-                    let result7 = match l3 {
-                        0 => {
-                            let e = ();
-                            Ok(e)
-                        }
-                        1 => {
-                            let e = {
-                                let l4 = *ptr1
-                                    .add(::core::mem::size_of::<*const u8>())
-                                    .cast::<*mut u8>();
-                                let l5 = *ptr1
-                                    .add(2 * ::core::mem::size_of::<*const u8>())
-                                    .cast::<usize>();
-                                let len6 = l5;
-                                let bytes6 = _rt::Vec::from_raw_parts(
-                                    l4.cast(),
-                                    len6,
-                                    len6,
-                                );
-                                _rt::string_lift(bytes6)
-                            };
-                            Err(e)
-                        }
-                        _ => _rt::invalid_enum_discriminant(),
-                    };
-                    result7
-                }
-            }
-        }
-    }
-}
-#[rustfmt::skip]
-#[allow(dead_code, clippy::all)]
 pub mod exports {
     pub mod local {
         pub mod build {
@@ -584,7 +378,11 @@ mod _rt {
             }
         }
     }
-    pub use alloc_crate::string::String;
+    pub use alloc_crate::boxed::Box;
+    #[cfg(target_arch = "wasm32")]
+    pub fn run_ctors_once() {
+        wit_bindgen_rt::run_ctors_once();
+    }
     pub use alloc_crate::vec::Vec;
     pub unsafe fn string_lift(bytes: Vec<u8>) -> String {
         if cfg!(debug_assertions) {
@@ -593,18 +391,6 @@ mod _rt {
             String::from_utf8_unchecked(bytes)
         }
     }
-    pub unsafe fn invalid_enum_discriminant<T>() -> T {
-        if cfg!(debug_assertions) {
-            panic!("invalid enum discriminant")
-        } else {
-            unsafe { core::hint::unreachable_unchecked() }
-        }
-    }
-    pub use alloc_crate::boxed::Box;
-    #[cfg(target_arch = "wasm32")]
-    pub fn run_ctors_once() {
-        wit_bindgen_rt::run_ctors_once();
-    }
     pub unsafe fn cabi_dealloc(ptr: *mut u8, size: usize, align: usize) {
         if size == 0 {
             return;
@@ -612,6 +398,7 @@ mod _rt {
         let layout = alloc::Layout::from_size_align_unchecked(size, align);
         alloc::dealloc(ptr, layout);
     }
+    pub use alloc_crate::string::String;
     extern crate alloc as alloc_crate;
     pub use alloc_crate::alloc;
 }
@@ -654,18 +441,13 @@ pub(crate) use __export_extension_impl as export;
 )]
 #[doc(hidden)]
 #[allow(clippy::octal_escapes)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 534] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x96\x03\x01A\x02\x01\
-A\x09\x01B\x05\x04\0\x07builder\x03\x01\x01h\0\x01j\0\x01s\x01@\x02\x04self\x01\x0c\
-canister-dirs\0\x02\x04\0\x1e[method]builder.build-canister\x01\x03\x03\0\x11loc\
-al:build/types\x05\0\x02\x03\0\0\x07builder\x01B\x06\x02\x03\x02\x01\x01\x04\0\x07\
-builder\x03\0\0\x01i\x01\x01j\0\x01s\x01@\x02\x0dcanister-types\x10canister-buil\
-der\x02\0\x03\x04\0\x11register-provider\x01\x04\x03\0\x14local:build/registry\x05\
-\x02\x01B\x05\x04\0\x07builder\x03\x01\x01h\0\x01j\0\x01s\x01@\x02\x04self\x01\x0c\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 303] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xaf\x01\x01A\x02\x01\
+A\x04\x01B\x05\x04\0\x07builder\x03\x01\x01h\0\x01j\0\x01s\x01@\x02\x04self\x01\x0c\
 canister-dirs\0\x02\x04\0\x1e[method]builder.build-canister\x01\x03\x04\0\x11loc\
-al:build/types\x05\x03\x01B\x02\x01@\0\x01\0\x04\0\x04init\x01\0\x04\0\x10local:\
-build/init\x05\x04\x04\0\x15local:build/extension\x04\0\x0b\x0f\x01\0\x09extensi\
-on\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.227.1\x10\
+al:build/types\x05\0\x01B\x02\x01@\0\x01\0\x04\0\x04init\x01\0\x04\0\x10local:bu\
+ild/init\x05\x01\x04\0\x15local:build/extension\x04\0\x0b\x0f\x01\0\x09extension\
+\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.227.1\x10\
 wit-bindgen-rust\x060.41.0";
 #[inline(never)]
 #[doc(hidden)]

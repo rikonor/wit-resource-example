@@ -16,7 +16,7 @@ interface init {
 }
 
 world extension {
-  import registry;
+  // import registry;
   export types;
   export init;
 }

@@ -1,4 +1,4 @@
-all: clean extension facade host
+all: extension facade host
 
 clean:
 	@rm -r target || :

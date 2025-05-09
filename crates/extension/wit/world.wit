@@ -1,0 +1,22 @@
+package local:build;
+
+interface types {
+  resource builder {
+    build-canister: func(canister-dir: string) -> result<_, string>;
+  }
+}
+
+interface registry {
+  use types.{builder};
+  register-provider: func(canister-type: string, canister-builder: builder) -> result<_, string>;
+}
+
+interface init {
+  init: func();
+}
+
+world extension {
+  import registry;
+  export types;
+  export init;
+}

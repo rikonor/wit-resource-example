@@ -1,0 +1,10 @@
+[package]
+name = "host"
+edition = "2024"
+version.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+tokio = { workspace = true, features = ["full"] }
+wasmtime.workspace = true
+wasmtime-wasi.workspace = true

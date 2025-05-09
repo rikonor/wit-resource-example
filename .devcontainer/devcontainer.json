@@ -1,0 +1,22 @@
+{
+	"name": "workspace",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"rust-lang.rust-analyzer",
+				"bytecodealliance.wit-idl",
+				"tamasfe.even-better-toml"
+			]
+		},
+		"codespaces": {
+			"extensions": [
+				"rust-lang.rust-analyzer",
+				"bytecodealliance.wit-idl",
+				"tamasfe.even-better-toml"
+			]
+		}
+	}
+}

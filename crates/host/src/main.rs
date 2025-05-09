@@ -1,21 +1,9 @@
-use anyhow::Error;
+use anyhow::{Context, Error};
 use wasmtime::{
     Config, Engine, Store,
-    component::{Component, Linker, bindgen},
+    component::{Component, Linker, Val, bindgen},
 };
 use wasmtime_wasi::{IoView, ResourceTable, WasiCtx, WasiCtxBuilder, WasiView};
-
-bindgen!({
-    path: "../extension/wit",
-    async: true,
-});
-
-// bindgen!({
-//     path: "../facade/wit",
-// });
-
-/// The above will generate bindings for Extension
-/// but I am not sure how I could also generate bindings for the facade component?
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -41,20 +29,121 @@ async fn main() -> Result<(), Error> {
     let mut lnk = Linker::new(&ngn);
     wasmtime_wasi::add_to_linker_async(&mut lnk)?;
 
-    // NOTE: I want to make sure the facade is linked so that the extension can call it
-    // NOTE: but it seems you can only specify one world in the `bindgen!(...)` call above (line 8)
-    // NOTE: so below I am doing so manually via the linker (not using any bindings)
+    // Extension -> Facade (Dynamic Link for `register`)
+    let inst = lnk
+        .instance("local:build/register")
+        .context("failed to get instance")?;
 
-    // Facade
-    let fac = Component::from_file(&ngn, "target/wasm32-wasip2/debug/facade.wasm")?;
-    lnk.instantiate_async(&mut store, &fac).await?;
+    println!("1");
 
-    // Extension
-    let ext = Component::from_file(&ngn, "target/wasm32-wasip2/debug/extension.wasm")?;
-    let ext = Extension::instantiate_async(&mut store, &ext, &lnk).await?;
+    // inst.func_new_async("register", move |mut store, params, results| {
+    //     let fname = fname.clone();
+    //     let fref = Arc::clone(&fref);
 
-    // NOTE: I want to invoke `init` on the `extension` component
-    ext.local_build_init().call_init(&mut store).await?;
+    //     Box::new(async move {
+    //         let f = {
+    //             let g = fref.lock().unwrap();
+    //             *g.as_ref()
+    //                 .ok_or_else(|| DynamicLinkingError::UnresolvedReference(fname))?
+    //         };
+
+    //         f.call_async(&mut store, params, results)
+    //             .await
+    //             .context("call failed")?;
+
+    //         f.post_return_async(&mut store)
+    //             .await
+    //             .context("post-return failed")?;
+
+    //         Ok(())
+    //     })
+    // })?;
+
+    // Extension (load)
+    let ext_cmpnt = Component::from_file(&ngn, "target/wasm32-wasip2/debug/extension.wasm")?;
+
+    // Facade (load)
+    let fac_cmpnt = Component::from_file(&ngn, "target/wasm32-wasip2/debug/facade.wasm")?;
+
+    // Extension (link)
+    let ext_inst = lnk
+        .instantiate_async(&mut store, &ext_cmpnt)
+        .await
+        .context("failed to instantiate extension")?;
+
+    // Facade (link)
+    let fac_inst = lnk
+        .instantiate_async(&mut store, &fac_cmpnt)
+        .await
+        .context("failed to instantiate facade")?;
+
+    // Extension (init)
+    let e = ext_inst
+        .get_export(&mut store, None, "local:build/init")
+        .context("failed to find export")?;
+
+    let e = ext_inst
+        .get_export(&mut store, Some(&e), "init")
+        .context("failed to find export")?;
+
+    let f = ext_inst
+        .get_func(&mut store, &e)
+        .context("failed to find function")?;
+
+    f.call_async(&mut store, &[], &mut [])
+        .await
+        .context("failed to call function")?;
+
+    f.post_return_async(&mut store)
+        .await
+        .context("failed to post-return")?;
+
+    // Facade (init)
+    let e = fac_inst
+        .get_export(&mut store, None, "local:build/init")
+        .context("failed to find export")?;
+
+    let e = fac_inst
+        .get_export(&mut store, Some(&e), "init")
+        .context("failed to find export")?;
+
+    let f = fac_inst
+        .get_func(&mut store, &e)
+        .context("failed to find function")?;
+
+    f.call_async(&mut store, &[], &mut [])
+        .await
+        .context("failed to call function")?;
+
+    f.post_return_async(&mut store)
+        .await
+        .context("failed to post-return")?;
+
+    // At this point the extension should have called the facade to register itself
+
+    // Facade (build)
+    let e = fac_inst
+        .get_export(&mut store, None, "local:build/build")
+        .context("failed to find export")?;
+
+    let e = fac_inst
+        .get_export(&mut store, Some(&e), "build")
+        .context("failed to find export")?;
+
+    let f = fac_inst
+        .get_func(&mut store, &e)
+        .context("failed to find function")?;
+
+    let mut results = vec![Val::Option(None)];
+    f.call_async(&mut store, &[], &mut results)
+        .await
+        .context("failed to call function")?;
+
+    f.post_return_async(&mut store)
+        .await
+        .context("failed to post-return")?;
+
+    println!("{results:?}");
 
     Ok(())
 }
